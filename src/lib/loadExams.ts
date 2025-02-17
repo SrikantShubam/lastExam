@@ -14,51 +14,38 @@ export interface Exam {
   category: string;
 }
 
-export const loadExams = (): Exam[] => {
+
+export const loadJSON = (fileName: string) => {
   try {
-    const filePath = path.join(process.cwd(), "data", "exam.json");
+    const filePath = path.join(process.cwd(), "data", fileName);
     const jsonData = fs.readFileSync(filePath, "utf-8");
     return JSON.parse(jsonData);
   } catch (error) {
-    console.error("Error loading exams:", error);
+    console.error(`Error loading ${fileName}:`, error);
     return [];
   }
 };
 
-export const loadCategories = (): Category[] => {
-  try {
-    const filePath = path.join(process.cwd(), "data", "categories.json");
-    const jsonData = fs.readFileSync(filePath, "utf-8");
-    return JSON.parse(jsonData);
-  } catch (error) {
-    console.error("Error loading categories:", error);
-    return [];
-  }
-};
+const categoriesPath = path.join(process.cwd(), "data", "categories.json");
+const examsPath = path.join(process.cwd(), "data", "exam.json");
 
+const categories: Category[] = JSON.parse(fs.readFileSync(categoriesPath, "utf-8"));
+const exams: Exam[] = JSON.parse(fs.readFileSync(examsPath, "utf-8"));
+
+// Function to get popular exams
 export const getPopularExams = (): { name: string; exam_date: string; other_category: string }[] => {
-  const categories = loadCategories();
-  const exams = loadExams();
-
-  // Find the popular category (id: 3)
   const popularCategory = categories.find((cat) => cat.id === 3);
-  
-  if (!popularCategory) {
-    console.warn("Popular category not found!");
-    return [];
-  }
+  if (!popularCategory) return [];
 
-  // Convert popular category ID to string for comparison
   const popularCategoryId = popularCategory.id.toString();
 
-  // Filter exams that have popular category in their comma-separated list
-  const filteredExams = exams
+  return exams
     .map((exam) => {
       const examCategories = exam.category.split(",").map((c) => c.trim());
       if (examCategories.includes(popularCategoryId)) {
-        // Find the first category that is not "popular"
         const otherCategoryId = examCategories.find((c) => c !== popularCategoryId);
         const otherCategoryName = categories.find((cat) => cat.id.toString() === otherCategoryId)?.name || "Unknown";
+
         return {
           name: exam.name,
           exam_date: exam.exam_date,
@@ -67,8 +54,17 @@ export const getPopularExams = (): { name: string; exam_date: string; other_cate
       }
       return null;
     })
-    .filter((exam) => exam !== null) as { name: string; exam_date: string; other_category: string }[];
+    .filter(Boolean) as { name: string; exam_date: string; other_category: string }[];
+};
 
-  console.log("Filtered Popular Exams:", filteredExams);
-  return filteredExams;
+// Function to get exams by category
+export const getExamsByCategory = (categoryId: number): { name: string; exam_date: string }[] => {
+  const categoryIdStr = categoryId.toString();
+
+  return exams
+    .filter((exam) => exam.category.split(",").map((c) => c.trim()).includes(categoryIdStr))
+    .map((exam) => ({
+      name: exam.name,
+      exam_date: exam.exam_date,
+    }));
 };

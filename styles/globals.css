@@ -82,15 +82,16 @@
   }
   @layer base {
     :root {
-      --button-bg: hsl(220, 90%, 55%); /* Primary button background */
+      --button-bg: hsl(0, 0%, 0%); /* Primary button background */
       --button-text: hsl(0, 0%, 100%); /* Light text for contrast */
-      --button-hover: hsl(220, 90%, 45%); /* Slightly darker on hover */
+      --button-hover: hsla(221, 87%, 9%, 0.432); /* Slightly darker on hover */
     }
   
     .dark {
-      --button-bg: hsl(220, 50%, 70%);
-      --button-text: hsl(0, 0%, 100%);
-      --button-hover: hsl(220, 50%, 60%);
+      --button-bg: hsl(0, 0%, 100%);
+      --button-text: hsl(0, 0%, 0%);
+      --button-hover: hsla(0, 0%, 100%, 0.637);
+ 
     }
   }
   
@@ -102,5 +103,6 @@
   
   .button:hover {
     background-color: var(--button-hover);
+    
   }
   
