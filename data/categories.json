@@ -1,82 +1,117 @@
 [
     {
         "id": 20,
-        "name": "IISER"
+        "name": "IISER",
+        "description": "IISER is an entrance exam for admission to science education institutions.",
+        "categoryGroup": "Undergraduate Science Entrance Exam"
     },
     {
         "id": 19,
-        "name": "JIPMAT"
+        "name": "JIPMAT",
+        "description": "JIPMAT is an entrance exam for integrated management programs.",
+        "categoryGroup": "Integrated Management Entrance Exam"
     },
-    {
-        "id": 18,
-        "name": "Foreign Language"
-    },
+
     {
         "id": 17,
-        "name": "MAH CET"
+        "name": "MAH CET",
+        "description": "MAH CET is a state-level entrance exam for various professional courses.",
+        "categoryGroup": "State Entrance Exam"
     },
     {
         "id": 16,
-        "name": "MPSC"
+        "name": "MPSC",
+        "description": "MPSC is an entrance exam for recruitment to public service positions in Maharashtra.",
+        "categoryGroup": "Public Service Exam"
     },
     {
         "id": 15,
-        "name": "CBSE"
+        "name": "CBSE",
+        "description": "CBSE refers to the school board examinations conducted for secondary education.",
+        "categoryGroup": "School Examination"
     },
     {
         "id": 14,
-        "name": "PG"
+        "name": "PG",
+        "description": "PG is an entrance exam for admission to postgraduate programs.",
+        "categoryGroup": "Postgraduate Entrance Exam"
     },
     {
         "id": 13,
-        "name": "SSC"
+        "name": "SSC",
+        "description": "SSC is an entrance exam for recruitment to various government job positions.",
+        "categoryGroup": "Government Job Entrance Exam"
     },
     {
         "id": 12,
-        "name": "Language"
+        "name": "Language Exams",
+        "description": "Exams that assesses proficiency in native / non-native languages",
+        "categoryGroup": "Language Entrance Exam"
     },
     {
         "id": 11,
-        "name": "LAW"
+        "name": "LAW",
+        "description": "LAW is an entrance exam for legal studies and law school admissions.",
+        "categoryGroup": "Law Entrance Exam"
     },
     {
         "id": 10,
-        "name": "Finance"
+        "name": "Finance",
+        "description": "Finance is an exam that tests knowledge in financial concepts.",
+        "categoryGroup": "Finance Entrance Exam"
     },
     {
         "id": 9,
-        "name": "FILM"
+        "name": "FILM",
+        "description": "FILM is an entrance exam for admission into film and media programs.",
+        "categoryGroup": "Film and Media Entrance Exam"
     },
     {
         "id": 8,
-        "name": "Graduate Foreign"
+        "name": "Graduate Foreign",
+        "description": "Graduate Foreign is an entrance exam for graduate-level studies focusing on foreign languages.",
+        "categoryGroup": "Graduate Language Entrance Exam"
     },
     {
         "id": 7,
-        "name": "MBA"
+        "name": "MBA",
+        "description": "MBA is an entrance exam for admission into business management programs.",
+        "categoryGroup": "Business School Entrance Exam"
     },
     {
         "id": 6,
-        "name": "CUET"
+        "name": "CUET",
+        "description": "CUET is an entrance exam for admission to various undergraduate university programs.",
+        "categoryGroup": "University Entrance Exam"
     },
     {
         "id": 5,
-        "name": "Defence"
+        "name": "Defence",
+        "description": "Defence is an entrance exam for joining the armed forces.",
+        "categoryGroup": "Defence Entrance Exam"
     },
     {
         "id": 4,
-        "name": "engineering"
+        "name": "Engineering",
+        "description": "Engineering is an entrance exam for admission into engineering and technology courses.",
+        "categoryGroup": "Engineering Entrance Exam"
     },
     {
         "id": 3,
-        "name": "popular"
+        "name": "popular",
+        "description": "Popular represents widely recognized and frequently attempted entrance exams.",
+        "categoryGroup": "General Entrance Exam"
     },
     {
         "id": 2,
-        "name": "medical"
+        "name": "Medical",
+        "description": "Entrance exams for admission into medical and healthcare programs. Contains Bachelors and Graduate Exam Categories",
+        "categoryGroup": "Medical Entrance Exam"
     },
     {
         "id": 1,
-        "name": "UPSC"
+        "name": "UPSC",
+        "description": "UPSC is an entrance exam for recruitment to civil services in India.",
+        "categoryGroup": "Civil Services Entrance Exam"
     }
 ]

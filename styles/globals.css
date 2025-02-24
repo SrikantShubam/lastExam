@@ -105,4 +105,42 @@
     background-color: var(--button-hover);
     
   }
-  
+  /* In styles/globals.css */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #000000;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #333333;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #ffffff;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #cccccc;
+}
+
+/* Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #000000 #ffffff;
+}
+
+.dark html {
+  scrollbar-color: #ffffff #000000;
+}

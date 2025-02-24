@@ -14,7 +14,21 @@ export interface Exam {
   category: string;
 }
 
-
+export interface Exam2 {
+  id: number;
+  exam_id: string;
+  name: string;
+  exam_date: string;
+  duration: string;
+  keywords: string;
+  category: string;
+  application_link: string;
+  more_info: string;
+  exam_description: string;
+  eligibility_criteria: string;
+  important_resources: string;
+  important_dates: string;
+}
 export const loadJSON = (fileName: string) => {
   try {
     const filePath = path.join(process.cwd(), "data", fileName);
@@ -31,7 +45,17 @@ const examsPath = path.join(process.cwd(), "data", "exam.json");
 
 const categories: Category[] = JSON.parse(fs.readFileSync(categoriesPath, "utf-8"));
 const exams: Exam[] = JSON.parse(fs.readFileSync(examsPath, "utf-8"));
+const slugify = (text: string) =>
+  text
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]+/g, "")
+    .replace(/--+/g, "-")
+    .trim();
 
+export const getExamByName = (slug: string): Exam | undefined => {
+  return exams.find((exam) => slugify(exam.name) === slug);
+};
 // Function to get popular exams
 export const getPopularExams = (): { name: string; exam_date: string; other_category: string }[] => {
   const popularCategory = categories.find((cat) => cat.id === 3);

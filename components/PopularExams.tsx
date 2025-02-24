@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
-
+import '../styles/globals.css'
 interface Exam {
   id: number;
   exam_id: string;

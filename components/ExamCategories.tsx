@@ -1,31 +1,71 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface Category {
   id: number;
   name: string;
+  description: string;
+  categoryGroup: string;
 }
 
 interface Exam {
+  id: number;
+  exam_id: string;
   name: string;
   exam_date: string;
+  duration: string;
+  keywords: string;
   category: string;
+  application_link: string;
+}
+
+function getAdjustedDate(examDate: string) {
+  try {
+    const date = new Date(examDate);
+    if (isNaN(date.getTime())) throw new Error("Invalid date");
+
+    const now = new Date();
+    let isEstimated = false;
+    while (date < now) {
+      date.setFullYear(date.getFullYear() + 1);
+      isEstimated = true;
+    }
+    return { date, isEstimated };
+  } catch (error) {
+    console.error("Invalid exam date:", examDate);
+    const fallbackDate = new Date();
+    fallbackDate.setMonth(fallbackDate.getMonth() + 3);
+    return { date: fallbackDate, isEstimated: true };
+  }
 }
 
 export default function ExamCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [exams, setExams] = useState<Exam[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [isUpcomingSelected, setIsUpcomingSelected] = useState(false);
   const [filteredExams, setFilteredExams] = useState<Exam[]>([]);
-
-  // Fetch categories and exams from the API
+  const [visibleCount, setVisibleCount] = useState(3); // Initial 3 cards on mobile
+  const slugify = (text: string) =>
+    text
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^\w-]+/g, "")
+      .replace(/--+/g, "-")
+      .trim();
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await fetch("/api/categories");
         const data = await res.json();
-        setCategories(data.categories);
+        const filteredCategories = data.categories.filter(
+          (cat: Category) => cat.name !== "Popular"
+        );
+        setCategories(filteredCategories);
         setExams(data.exams);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -34,114 +74,332 @@ export default function ExamCategories() {
     fetchData();
   }, []);
 
-  // Handle category selection
-  const handleCategoryClick = (categoryId: number) => {
-    setSelectedCategory(categoryId);
-    setFilteredExams(
-      exams.filter((exam) =>
-        exam.category.split(",").map((c) => c.trim()).includes(categoryId.toString())
-      )
-    );
+  const getCategoryDescription = () => {
+    if (isUpcomingSelected) {
+      return "Exams scheduled within the next 60 days.";
+    }
+    const selected = categories.find((cat) => cat.id === selectedCategory);
+    return selected ? selected.description : "Select a category to view exams.";
+  };
+
+  const handleViewMore = () => {
+    setVisibleCount((prev) => prev + 3); // Show 3 more cards
   };
 
   return (
-    <section className="relative py-16 px-6 md:px-12 lg:px-24 bg-background text-foreground overflow-hidden">
-      {/* Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/10 to-background opacity-50 -z-10" />
+    <section className="relative py-8 px-2 sm:py-12 sm:px-4 md:py-24 md:px-12 lg:px-20 bg-background text-foreground">
+      <div className="max-w-8xl mx-auto">
+        {/* Mobile and Tablet View (<1024px) */}
+        <div className="lg:hidden">
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="text-3xl sm:text-4xl md:text-6xl font-bold mb-6 text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
+          >
+            Exam Categories
+          </motion.h1>
 
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 -z-20">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{ y: -100, x: Math.random() * window.innerWidth }}
-            animate={{ y: window.innerHeight + 100 }}
-            transition={{
-              duration: Math.random() * 10 + 10,
-              repeat: Infinity,
-              ease: "linear",
-              delay: Math.random() * 5
-            }}
-            className="absolute w-1 h-1 bg-primary/20 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              width: `${Math.random() * 4 + 2}px`,
-              height: `${Math.random() * 4 + 2}px`
-            }}
-          />
-        ))}
-      </div>
-
-      <div className="max-w-7xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-4xl font-bold text-center mb-12 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
-        >
-          Exam Categories
-        </motion.h2>
-
-        {/* Categories List */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {categories.map((category) => (
+          {/* Horizontal Buttons */}
+          <div className="flex flex-wrap justify-center gap-2 mb-6 sm:mb-8 md:mb-12">
             <motion.button
-              key={category.id}
-              onClick={() => handleCategoryClick(category.id)}
+              onClick={() => {
+                setIsUpcomingSelected(true);
+                setSelectedCategory(null);
+                const today = new Date();
+                const upcoming = exams.filter((exam) => {
+                  const { date } = getAdjustedDate(exam.exam_date);
+                  const diffTime = date.getTime() - today.getTime();
+                  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                  return diffDays > 0 && diffDays <= 60;
+                });
+                setFilteredExams(upcoming);
+                setVisibleCount(3); // Reset to 3 on category change
+              }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`px-6 py-3 rounded-full text-sm font-medium transition-all ${
-                selectedCategory === category.id
-                  ? "bg-primary text-white shadow-lg"
-                  : "bg-secondary/50 hover:bg-secondary/70 text-foreground"
+              className={`px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm md:text-base font-medium transition-all ${
+                isUpcomingSelected
+                  ? "bg-primary text-primary-foreground shadow-lg"
+                  : "bg-muted hover:bg-muted/80 text-foreground"
               }`}
             >
-              {category.name}
+              Upcoming
             </motion.button>
-          ))}
-        </div>
+            {categories.map((category) => (
+              <motion.button
+                key={category.id}
+                onClick={() => {
+                  setIsUpcomingSelected(false);
+                  setSelectedCategory(category.id);
+                  setFilteredExams(
+                    exams.filter((exam) =>
+                      exam.category
+                        .split(",")
+                        .map((c) => c.trim())
+                        .includes(category.id.toString())
+                    )
+                  );
+                  setVisibleCount(3); // Reset to 3 on category change
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={`px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm md:text-base font-medium transition-all ${
+                  selectedCategory === category.id
+                    ? "bg-primary text-primary-foreground shadow-lg"
+                    : "bg-muted hover:bg-muted/80 text-foreground"
+                }`}
+              >
+                {category.name}
+              </motion.button>
+            ))}
+          </div>
 
-        {/* Exams List */}
-        <AnimatePresence>
-          {selectedCategory && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
+          {/* Category Description */}
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={isUpcomingSelected ? "upcoming" : selectedCategory || "default"}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="bg-white/10 backdrop-blur-sm rounded-xl p-6 shadow-lg"
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.5 }}
+              className="text-center text-sm sm:text-base md:text-lg text-muted-foreground mb-6 sm:mb-8 md:mb-12 max-w-2xl mx-auto"
             >
-              <h3 className="text-2xl font-semibold mb-6">
-                Exams in {categories.find((cat) => cat.id === selectedCategory)?.name}
-              </h3>
-              <div className="space-y-4">
-                {filteredExams.length > 0 ? (
-                  filteredExams.map((exam, index) => (
+              {getCategoryDescription()}
+            </motion.p>
+          </AnimatePresence>
+
+          {/* Exam Cards with View More */}
+          <AnimatePresence>
+            {filteredExams.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
+                {filteredExams.slice(0, visibleCount).map((exam, index) => {
+                  const { date, isEstimated } = getAdjustedDate(exam.exam_date);
+                  return (
                     <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
+                      key={`${exam.exam_id}-${index}`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.1 }}
                     >
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">{exam.name}</span>
-                        <span className="text-sm text-muted-foreground">
-                          {new Date(exam.exam_date).toLocaleDateString("en-US", {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                          })}
-                        </span>
-                      </div>
+                      <Card className="p-4 bg-card text-card-foreground hover:shadow-xl transition-shadow relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="relative z-10 space-y-3">
+                          <h3 className="text-lg sm:text-xl md:text-2xl font-bold">{exam.name}</h3>
+                          <div className="text-xs sm:text-sm text-muted-foreground">
+                            {date.toLocaleDateString("en-IN", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            })}
+                            {isEstimated && (
+                              <span className="ml-2 text-[10px] sm:text-xs text-red-500 font-medium">
+                                Expected
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-xs sm:text-sm text-muted-foreground">
+                            Duration: {exam.duration} | Keywords: {exam.keywords.split(",")[0]}{" "}
+                            {exam.keywords.split(",").length > 1 && "..."}
+                          </div>
+                          {exam.application_link && (
+                            <a
+                              href={exam.application_link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs sm:text-sm text-primary hover:underline"
+                            >
+                              Apply Now
+                            </a>
+                          )}
+                         <Link href={`/exam-details/${slugify(exam.name)}`}>
+                            <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md transition-all mt-3 text-sm">
+                              View Details
+                            </Button>
+                          </Link>
+                        </div>
+                      </Card>
                     </motion.div>
-                  ))
-                ) : (
-                  <p className="text-center text-muted-foreground">No exams found for this category.</p>
+                  );
+                })}
+                {filteredExams.length > visibleCount && (
+                  <motion.button
+                    onClick={handleViewMore}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="mt-4 px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full text-sm font-medium shadow-md transition-all mx-auto block"
+                  >
+                    View More
+                  </motion.button>
                 )}
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            ) : (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="text-center text-sm sm:text-base md:text-lg text-muted-foreground"
+              >
+                {isUpcomingSelected || selectedCategory
+                  ? "No exams found."
+                  : "Select a category to view exams."}
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Desktop View (≥1024px): Sidebar Layout */}
+        <div className="hidden lg:flex">
+          <motion.aside
+            initial={{ x: -50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="w-64 p-6 bg-background border-r border-border h-screen overflow-y-auto sticky top-0"
+          >
+            <h2 className="text-2xl font-bold tracking-tight mb-6">Categories</h2>
+            <ul className="space-y-3">
+              <li>
+                <button
+                  onClick={() => {
+                    setIsUpcomingSelected(true);
+                    setSelectedCategory(null);
+                    const today = new Date();
+                    const upcoming = exams.filter((exam) => {
+                      const { date } = getAdjustedDate(exam.exam_date);
+                      const diffTime = date.getTime() - today.getTime();
+                      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                      return diffDays > 0 && diffDays <= 60;
+                    });
+                    setFilteredExams(upcoming);
+                  }}
+                  className={`w-full text-left text-base font-semibold tracking-tight py-2 px-3 rounded ${
+                    isUpcomingSelected
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-muted"
+                  }`}
+                >
+                  Upcoming
+                </button>
+              </li>
+              {categories.map((category) => (
+                <li key={category.id}>
+                  <button
+                    onClick={() => {
+                      setIsUpcomingSelected(false);
+                      setSelectedCategory(category.id);
+                      setFilteredExams(
+                        exams.filter((exam) =>
+                          exam.category
+                            .split(",")
+                            .map((c) => c.trim())
+                            .includes(category.id.toString())
+                        )
+                      );
+                    }}
+                    className={`w-full text-left text-base font-semibold tracking-tight py-2 px-3 rounded ${
+                      selectedCategory === category.id
+                        ? "bg-primary text-primary-foreground"
+                        : "hover:bg-muted"
+                    }`}
+                  >
+                    {category.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </motion.aside>
+
+          <main className="flex-1 overflow-y-auto lg:pl-8">
+            <motion.h1
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-4xl lg:text-6xl font-bold mb-6 text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
+            >
+              Exam Categories
+            </motion.h1>
+
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={isUpcomingSelected ? "upcoming" : selectedCategory || "default"}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.5 }}
+                className="text-center text-base lg:text-lg text-muted-foreground mb-8 lg:mb-12 max-w-2xl mx-auto"
+              >
+                {getCategoryDescription()}
+              </motion.p>
+            </AnimatePresence>
+
+            <AnimatePresence>
+              {filteredExams.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                  {filteredExams.map((exam, index) => {
+                    const { date, isEstimated } = getAdjustedDate(exam.exam_date);
+                    return (
+                      <motion.div
+                        key={`${exam.exam_id}-${index}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.1 }}
+                      >
+                        <Card className="p-4 lg:p-6 bg-card text-card-foreground hover:shadow-xl transition-shadow relative overflow-hidden group">
+                          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <div className="relative z-10 space-y-3 lg:space-y-4">
+                            <h3 className="text-lg lg:text-2xl font-bold">{exam.name}</h3>
+                            <div className="text-xs lg:text-sm text-muted-foreground">
+                              {date.toLocaleDateString("en-IN", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })}
+                              {isEstimated && (
+                                <span className="ml-2 text-[10px] lg:text-xs text-red-500 font-medium">
+                                  Expected
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-xs lg:text-sm text-muted-foreground">
+                              Duration: {exam.duration} | Keywords: {exam.keywords.split(",")[0]}{" "}
+                              {exam.keywords.split(",").length > 1 && "..."}
+                            </div>
+                            {exam.application_link && (
+                              <a
+                                href={exam.application_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs lg:text-sm text-primary hover:underline"
+                              >
+                                Apply Now
+                              </a>
+                            )}
+                          <Link href={`/exam-details/${slugify(exam.name)}`}>
+                              <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-md transition-all mt-3 lg:mt-4 text-sm lg:text-base">
+                                View Details
+                              </Button>
+                            </Link>
+                          </div>
+                        </Card>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-center text-base lg:text-lg text-muted-foreground"
+                >
+                  {isUpcomingSelected || selectedCategory
+                    ? "No exams found."
+                    : "Select a category to view exams."}
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </main>
+        </div>
       </div>
     </section>
   );
