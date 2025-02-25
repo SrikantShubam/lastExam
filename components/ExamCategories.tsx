@@ -57,6 +57,7 @@ export default function ExamCategories() {
       .replace(/[^\w-]+/g, "")
       .replace(/--+/g, "-")
       .trim();
+      
   useEffect(() => {
     const fetchData = async () => {
       try {
