@@ -687,7 +687,7 @@ export default function ExamCategories() {
   };
 
   return (
-    <section className="relative py-8 px-2 sm:py-12 sm:px-4 md:py-24 md:px-12 lg:px-20 bg-background text-foreground">
+    <section className="relative py-8 px-2 sm:py-12 sm:px-4 md:py-24 md:px-12 lg:px-20 bg-background text-foreground" id="categories">
       <div className="max-w-8xl mx-auto">
         {/* Mobile and Tablet View (<1024px) */}
         <div className="lg:hidden">

@@ -79,8 +79,14 @@ export default function Navbar() {
           <Link href="/" className="text-sm text-black dark:text-white hover:underline">
             Home
           </Link>
-          <Link href="/categories" className="text-sm text-black dark:text-white hover:underline">
+          <Link href="#categories" className="text-sm text-black dark:text-white hover:underline">
             Categories
+          </Link>
+          <Link href="#about" className="text-sm text-black dark:text-white hover:underline">
+            About
+          </Link>
+          <Link href="/pyqs" className="text-sm text-black dark:text-white hover:underline">
+            PYQs
           </Link>
           <Link href="/leaderboard" className="text-sm text-black dark:text-white hover:underline">
             Leaderboard

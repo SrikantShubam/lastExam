@@ -59,7 +59,7 @@ export default function Features() {
               
               <div className="relative z-10">
                 <div className="mb-6 flex justify-center">
-                  <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20">
+                  <div className="">
                     {feature.icon}
                   </div>
                 </div>
