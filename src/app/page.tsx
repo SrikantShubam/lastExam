@@ -7,6 +7,7 @@ import Testimonials from "../../components/Testinomials";
 import AboutUs from "../../components/AboutUs";
 import PYQSection from "../../components/PYQs";
 import FAQSection from "../../components/Faqs";
+import ContributeSection from "../../components/Contribute";
 import "../../styles/globals.css";
 
 export default async function Home() {
@@ -23,6 +24,7 @@ export default async function Home() {
       <Testimonials />
       <AboutUs />
       <FAQSection />
+      < ContributeSection />
     </main>
   );
 }

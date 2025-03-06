@@ -773,7 +773,7 @@ export default function ExamCategories() {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
                 {filteredExams.slice(0, visibleCount).map((exam, index) => {
                   const { date, isEstimated, isTBD } = getAdjustedDate(exam.exam_date);
-                  console.log(`Exam: ${exam.name}, Date: ${exam.exam_date}, Parsed:`, { date, isEstimated, isTBD });
+                  // console.log(`Exam: ${exam.name}, Date: ${exam.exam_date}, Parsed:`, { date, isEstimated, isTBD });
                   return (
                     <motion.div
                       key={`${exam.exam_id}-${index}`}
@@ -945,7 +945,7 @@ export default function ExamCategories() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                   {filteredExams.slice(0, visibleCount).map((exam, index) => {
                     const { date, isEstimated, isTBD } = getAdjustedDate(exam.exam_date);
-                    console.log(`Exam: ${exam.name}, Date: ${exam.exam_date}, Parsed:`, { date, isEstimated, isTBD });
+                    // console.log(`Exam: ${exam.name}, Date: ${exam.exam_date}, Parsed:`, { date, isEstimated, isTBD });
                     return (
                       <motion.div
                         key={`${exam.exam_id}-${index}`}
