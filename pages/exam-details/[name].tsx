@@ -7,6 +7,12 @@ import { GetServerSideProps } from "next";
 import { getExamByName, Exam } from "../../src/lib/loadExams";
 import Layout from "../../components/Layout";
 
+import Particles from "react-tsparticles";
+import { loadSlim } from "tsparticles-slim";
+const particlesInit = async (engine) => {
+  await loadSlim(engine);
+};
+
 interface ExamDetails {
   id: number;
   exam_id: string;
@@ -106,7 +112,41 @@ export default function ExamDetails({ exam }: { exam: Exam | null }) {
   }
 
   return (
-    <Layout>
+    <> <div className="absolute inset-0 z-0 pointer-events-none">
+            <Particles
+              id="tsparticles"
+              init={particlesInit}
+              options={{
+                particles: {
+                  number: { value: 60, density: { enable: true, value_area: 800 } },
+                  color: { value: ["#000000", "#ffffff"] }, // Primary/secondary colors
+                  shape: { type: "circle" },
+                  opacity: { value: 0.1, random: true },
+                  size: { value: 3, random: true },
+                  move: {
+                    enable: true,
+                    speed: 0.5,
+                    direction: "none",
+                    random: true,
+                    out_mode: "out",
+                  },
+                },
+                interactivity: {
+                  events: {
+                    onhover: { enable: true, mode: "repulse" },
+                    onclick: { enable: true, mode: "push" },
+                  },
+                  modes: {
+                    repulse: { distance: 100, duration: 0.4 },
+                    push: { particles_nb: 4 },
+                  },
+                },
+                retina_detect: true,
+              }}
+            />
+          </div>
+          
+          <Layout>
       <section className="max-w-4xl px-6 py-16 mx-auto bg-white dark:bg-black text-black dark:text-white min-h-screen">
         {/* Header */}
         <motion.header
@@ -294,6 +334,8 @@ export default function ExamDetails({ exam }: { exam: Exam | null }) {
         </motion.div>
       </section>
     </Layout>
+          </>
+  
   );
 }
 
