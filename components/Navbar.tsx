@@ -49,8 +49,11 @@ export default function Navbar() {
             <Link href="/" className="px-4 py-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-900">
               Home
             </Link>
-            <Link href="/categories" className="px-4 py-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-900">
+            <Link href="/#categories" className="px-4 py-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-900">
               Categories
+            </Link>
+            <Link href="/pyqs" className="px-4 py-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-900">
+              PYQs
             </Link>
             <Link href="/leaderboard" className="px-4 py-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-900">
               Leaderboard
