@@ -1,13 +1,21 @@
-import { useState, FormEvent, useEffect } from "react";
+"use client";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
-import { signInWithEmailAndPassword, signInWithPopup, sendPasswordResetEmail } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  onAuthStateChanged,
+} from "firebase/auth";
 import { auth, googleProvider } from "../../lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Mail, Lock, Loader2, Globe } from "lucide-react";
+import { Mail, Lock, Loader2 } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
 import { Dialog, DialogPanel, DialogTitle, Transition } from "@headlessui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
@@ -15,7 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import Layout from "../Layout";
-import { FcGoogle } from "react-icons/fc"
+
 // Define the form schema for login using Zod
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -46,6 +54,7 @@ const Login: React.FC = () => {
     isResetModalOpen: false,
   });
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
 
   const { error, loading, isResetModalOpen } = state;
 
@@ -68,11 +77,9 @@ const Login: React.FC = () => {
 
   // Detect theme changes by observing the `dark` class on the <html> element
   useEffect(() => {
-    // Initial theme check
     const root = document.documentElement;
     setIsDarkMode(root.classList.contains("dark"));
 
-    // Set up a MutationObserver to watch for class changes on the <html> element
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.type === "attributes" && mutation.attributeName === "class") {
@@ -81,16 +88,41 @@ const Login: React.FC = () => {
       });
     });
 
-    // Observe changes to the class attribute on the <html> element
     observer.observe(root, { attributes: true });
 
-    // Cleanup observer on unmount
     return () => observer.disconnect();
   }, []);
 
+  // Detect mobile device
+  useEffect(() => {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+    setIsMobile(isMobileDevice);
+  }, []);
+
+  // Handle redirect result after signInWithRedirect
+  useEffect(() => {
+    const handleRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          router.push("/"); // Redirect to homepage after successful login
+        }
+      } catch (err: unknown) {
+        setState((prev) => ({
+          ...prev,
+          error: "Failed to sign in with Google. Please try again.",
+          loading: false,
+        }));
+        console.error("Google redirect error:", err);
+      }
+    };
+
+    handleRedirectResult();
+  }, [router]);
+
   const handleLogin = async (values: z.infer<typeof loginSchema>) => {
     setState((prev) => ({ ...prev, error: "", loading: true }));
-
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
       router.push("/");
@@ -106,10 +138,15 @@ const Login: React.FC = () => {
 
   const handleGoogleLogin = async () => {
     setState((prev) => ({ ...prev, error: "", loading: true }));
-
     try {
-      await signInWithPopup(auth, googleProvider);
-      router.push("/");
+      if (isMobile) {
+        // Use signInWithRedirect for mobile devices
+        await signInWithRedirect(auth, googleProvider);
+      } else {
+        // Use signInWithPopup for desktop devices
+        await signInWithPopup(auth, googleProvider);
+        router.push("/"); // Redirect immediately after popup login
+      }
     } catch (err: unknown) {
       setState((prev) => ({
         ...prev,
@@ -122,7 +159,6 @@ const Login: React.FC = () => {
 
   const handleForgotPassword = async (values: z.infer<typeof resetPasswordSchema>) => {
     setState((prev) => ({ ...prev, error: "", loading: true }));
-
     try {
       await sendPasswordResetEmail(auth, values.resetEmail);
       setState((prev) => ({
@@ -254,8 +290,9 @@ const Login: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Right Side: Image */}
-        <motion.div
+   
+     {/* Right Side: Image */}
+     <motion.div
   initial={{ opacity: 0, x: 20 }}
   animate={{ opacity: 1, x: 0 }}
   transition={{ duration: 0.5, ease: "easeOut" }}
