@@ -380,7 +380,7 @@ export default function Hero() {
           variants={itemVariants}
           className="flex flex-col sm:flex-row gap-4"
         >
-          <Link href="/explore">
+          <Link href="/pyqs">
             <Button
               variant="default"
               className="min-w-40 bg-black text-white dark:bg-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90 rounded-none border border-black dark:border-white px-8 py-6 text-sm font-medium tracking-wide uppercase transition-all duration-300"

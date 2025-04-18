@@ -11,7 +11,7 @@ export default function Layout({ children }: LayoutProps) {
     <AuthProvider>
     <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white">
       <Navbar />
-      {children}
+      <main className="flex-1 min-h-[calc(100vh-8rem)]">{children}</main>
       <Footer />
     </div>
     </AuthProvider>

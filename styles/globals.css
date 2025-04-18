@@ -148,3 +148,8 @@ html {
 html {
   scroll-behavior: smooth;
 }
+
+/*toastify shit*/
+.Toastify__toast--success {
+  @apply bg-white text-white dark:bg-gray-800 text-black  !important;
+}

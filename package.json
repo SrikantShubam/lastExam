@@ -36,6 +36,7 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.55.0",
     "react-icons": "^5.4.0",
+    "react-toastify": "^11.0.5",
     "react-tsparticles": "^2.12.2",
     "react-youtube": "^10.1.0",
     "tailwind-merge": "^3.0.1",
