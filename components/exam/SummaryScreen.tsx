@@ -232,6 +232,7 @@ const SummaryScreen = ({
     let unanswered = 0;
     let positiveMarks = 0;
     let negativeMarks = 0;
+    let attempted = 0; // New metric for tracking attempted questions
 
     questions.forEach((q) => {
       const userAnswer = userAnswers[q.question_no];
@@ -240,6 +241,11 @@ const SummaryScreen = ({
       if (!correctAnswer) {
         unanswered += 1;
         return;
+      }
+
+      // Check if question was attempted
+      if (userAnswer) {
+        attempted += 1;
       }
 
       if (q.question_type === 'mcq') {
@@ -281,12 +287,25 @@ const SummaryScreen = ({
 
     const maxScore = totalQuestions * positiveMarking;
     const accuracy = totalQuestions > 0 ? ((correct / totalQuestions) * 100).toFixed(1) : 0;
+    const attemptRate = totalQuestions > 0 ? ((attempted / totalQuestions) * 100).toFixed(1) : 0; // New metric
     const avgTimePerQuestion = totalQuestions > 0 ? (timeTaken / totalQuestions).toFixed(1) : 0;
 
-    return { score, maxScore, positiveMarks, negativeMarks, correct, incorrect, unanswered, accuracy, avgTimePerQuestion };
+    return { 
+      score, 
+      maxScore, 
+      positiveMarks, 
+      negativeMarks, 
+      correct, 
+      incorrect, 
+      unanswered, 
+      attempted, // New metric included in return
+      accuracy, 
+      attemptRate, // New metric included in return
+      avgTimePerQuestion 
+    };
   };
 
-  const { score, maxScore, positiveMarks, negativeMarks, correct, incorrect, unanswered, accuracy, avgTimePerQuestion } =
+  const { score, maxScore, positiveMarks, negativeMarks, correct, incorrect, unanswered, attempted, accuracy, attemptRate, avgTimePerQuestion } =
     calculateMetrics();
   const percentage = maxScore > 0 ? ((score / maxScore) * 100).toFixed(1) : 0;
   const isPass = percentage >= 60;
@@ -329,7 +348,9 @@ const SummaryScreen = ({
     });
   };
 
+  // Updated chart data to include attempted metric
   const chartData = [
+    { name: 'Attempted', value: attempted, fill: '#0ea5e9' }, // New data point
     { name: 'Correct', value: correct, fill: '#22d3ee' },
     { name: 'Incorrect', value: incorrect, fill: '#a855f7' },
     { name: 'Unanswered', value: unanswered, fill: '#6b7280' },
@@ -461,7 +482,14 @@ const SummaryScreen = ({
                 </div>
               </div>
               
-              <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-4 gap-4">
+                {/* New Attempted Box */}
+                <div className="flex flex-col items-center p-3 bg-blue-500/10 rounded-lg">
+                  <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Attempted</p>
+                  <p className="text-3xl font-bold text-blue-500">{attempted}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{attemptRate}% of total</p>
+                </div>
+                
                 <div className="flex flex-col items-center p-3 bg-emerald-500/10 rounded-lg">
                   <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Correct</p>
                   <p className="text-3xl font-bold text-emerald-500">{correct}</p>
@@ -668,10 +696,12 @@ const SummaryScreen = ({
                                         "flex items-center justify-center w-8 h-8 rounded-full",
                                         isCorrect 
                                           ? "bg-emerald-500/10 text-emerald-500" 
-                                          : "bg-rose-500/10 text-rose-500"
+                                          : userAnswerKey
+                                            ? "bg-rose-500/10 text-rose-500"
+                                            : "bg-muted text-muted-foreground"
                                       )}
                                     >
-                                      {isCorrect ? <FiCheck /> : <FiX />}
+                                      {isCorrect ? <FiCheck /> : userAnswerKey ? <FiX /> : <FiCircle />}
                                     </div>
                                     <div>
                                       <p className="font-medium text-foreground">

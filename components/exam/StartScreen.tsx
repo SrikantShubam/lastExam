@@ -106,19 +106,313 @@
 // export default StartScreen;
 
 
+// import { useState, Fragment } from "react";
+// import { Button } from "@/components/ui/button";
+// import { Dialog, DialogPanel, DialogTitle, Transition } from "@headlessui/react";
+
+// const StartScreen = ({ paperData, hasPreviousAttempt, onStartExam }) => {
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+
+//   const handleStartClick = () => {
+//     if (hasPreviousAttempt) {
+//       setIsModalOpen(true);
+//     } else {
+//       onStartExam(true); // Start new directly if no previous attempt
+//     }
+//   };
+
+//   return (
+//     <section className="py-12 px-6 md:px-12 lg:px-24 bg-background text-foreground min-h-screen flex items-center justify-center">
+//       <div className="text-center max-w-2xl mx-auto">
+//         <h1 className="text-3xl font-bold mb-4">{paperData.paper_name}</h1>
+//         <p className="text-muted-foreground mb-2">Exam: {paperData.exam}</p>
+//         <p className="text-muted-foreground mb-2">Subject: {paperData.subject}</p>
+//         <p className="text-muted-foreground mb-2">Total Questions: {paperData.total_questions}</p>
+//         <p className="text-muted-foreground mb-2">Positive Marking: +{paperData.positive_marking || 1}</p>
+//         <p className="text-muted-foreground mb-2">Negative Marking: -{paperData.negative_marking || 0.25}</p>
+//         <p className="text-muted-foreground mb-6">Total Time: {paperData.total_time || "2 hours"}</p>
+//         <p className="text-muted-foreground mb-4">
+//           Do not disconnect. You are going to see an ad before the start and at the end.
+//         </p>
+//         <Button onClick={handleStartClick} className="bg-primary text-primary-foreground hover:bg-primary/90">
+//           Start Exam
+//         </Button>
+
+//         {/* Modal for Previous Attempt Prompt */}
+//         <Transition appear show={isModalOpen} as={Fragment}>
+//           <Dialog onClose={() => setIsModalOpen(false)} className="relative z-50">
+//             {/* Backdrop */}
+//             <Transition.Child
+//               as={Fragment}
+//               enter="ease-out duration-300"
+//               enterFrom="opacity-0"
+//               enterTo="opacity-100"
+//               leave="ease-in duration-200"
+//               leaveFrom="opacity-100"
+//               leaveTo="opacity-0"
+//             >
+//               <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+//             </Transition.Child>
+
+//             {/* Centering Container */}
+//             <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+//               <Transition.Child
+//                 as={Fragment}
+//                 enter="ease-out duration-300"
+//                 enterFrom="opacity-0 scale-95"
+//                 enterTo="opacity-100 scale-100"
+//                 leave="ease-in duration-200"
+//                 leaveFrom="opacity-100 scale-100"
+//                 leaveTo="opacity-0 scale-95"
+//               >
+//                 {/* Dialog Panel - Fixed width to prevent overflow */}
+//                 <DialogPanel className="w-full max-w-md rounded-lg bg-background p-6 shadow-xl">
+//                   <DialogTitle className="text-lg font-semibold text-foreground">
+//                     Previous Attempt Detected
+//                   </DialogTitle>
+
+//                   <p className="mt-2 text-sm text-muted-foreground">
+//                     You have a previous attempt in progress. Would you like to continue or start a new exam?
+//                   </p>
+
+//                   {/* Button container with proper spacing */}
+//                   <div className="mt-6 flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2 sm:justify-end">
+//                     <Button
+//                       variant="outline"
+//                       onClick={() => {
+//                         setIsModalOpen(false);
+//                         onStartExam(false); // Continue
+//                       }}
+//                       className="w-full text-black dark:text-white sm:w-auto"
+//                     >
+//                       Continue Previous Attempt
+//                     </Button>
+//                     <Button
+//                       onClick={() => {
+//                         setIsModalOpen(false);
+//                         onStartExam(true); // Start New
+//                       }}
+//                       className="w-full sm:w-auto"
+//                     >
+//                       Start New Attempt
+//                     </Button>
+//                   </div>
+//                 </DialogPanel>
+//               </Transition.Child>
+//             </div>
+//           </Dialog>
+//         </Transition>
+//       </div>
+//     </section>
+//   );
+// };
+
+// export default StartScreen;
+
+
+// import { useState, Fragment } from "react";
+// import { Button } from "@/components/ui/button";
+// import { Dialog, DialogPanel, DialogTitle, Transition } from "@headlessui/react";
+// import { useRouter } from "next/router";
+
+// const StartScreen = ({ paperData, hasPreviousAttempt, onStartExam, isLoggedIn }) => {
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false);
+//   const router = useRouter();
+//   const { exam, subject, paper, mode } = router.query;
+
+//   const handleStartClick = () => {
+//     if (!isLoggedIn) {
+//       setIsLoginPromptOpen(true); // Show login prompt if not logged in
+//     } else if (hasPreviousAttempt) {
+//       setIsModalOpen(true); // Show previous attempt modal if logged in and has previous attempt
+//     } else {
+//       onStartExam(true); // Start new directly if no previous attempt
+//     }
+//   };
+
+//   const handleLoginRedirect = () => {
+//     const redirectUrl = `/${exam}/${subject}/${paper}?mode=${mode}`;
+//     router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
+//   };
+
+//   const handleSignupRedirect = () => {
+//     const redirectUrl = `/${exam}/${subject}/${paper}?mode=${mode}`;
+//     router.push(`/signup?redirect=${encodeURIComponent(redirectUrl)}`);
+//   };
+
+//   return (
+//     <section className="py-12 px-6 md:px-12 lg:px-24 bg-background text-foreground min-h-screen flex items-center justify-center">
+//       <div className="text-center max-w-2xl mx-auto">
+//         <h1 className="text-3xl font-bold mb-4">{paperData.paper_name}</h1>
+//         <p className="text-muted-foreground mb-2">Exam: {paperData.exam}</p>
+//         <p className="text-muted-foreground mb-2">Subject: {paperData.subject}</p>
+//         <p className="text-muted-foreground mb-2">Total Questions: {paperData.total_questions}</p>
+//         <p className="text-muted-foreground mb-2">Positive Marking: +{paperData.positive_marking || 1}</p>
+//         <p className="text-muted-foreground mb-2">Negative Marking: -{paperData.negative_marking || 0.25}</p>
+//         <p className="text-muted-foreground mb-6">Total Time: {paperData.total_time || "2 hours"}</p>
+//         <p className="text-muted-foreground mb-4">
+//           Do not disconnect. You are going to see an ad before the start and at the end.
+//         </p>
+//         <Button onClick={handleStartClick} className="bg-primary text-primary-foreground hover:bg-primary/90">
+//           Start Exam
+//         </Button>
+
+//         {/* Modal for Previous Attempt Prompt */}
+//         <Transition appear show={isModalOpen} as={Fragment}>
+//           <Dialog onClose={() => setIsModalOpen(false)} className="relative z-50">
+//             <Transition.Child
+//               as={Fragment}
+//               enter="ease-out duration-300"
+//               enterFrom="opacity-0"
+//               enterTo="opacity-100"
+//               leave="ease-in duration-200"
+//               leaveFrom="opacity-100"
+//               leaveTo="opacity-0"
+//             >
+//               <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+//             </Transition.Child>
+
+//             <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+//               <Transition.Child
+//                 as={Fragment}
+//                 enter="ease-out duration-300"
+//                 enterFrom="opacity-0 scale-95"
+//                 enterTo="opacity-100 scale-100"
+//                 leave="ease-in duration-200"
+//                 leaveFrom="opacity-100 scale-100"
+//                 leaveTo="opacity-0 scale-95"
+//               >
+//                 <DialogPanel className="w-full max-w-md rounded-lg bg-background p-6 shadow-xl">
+//                   <DialogTitle className="text-lg font-semibold text-foreground">
+//                     Previous Attempt Detected
+//                   </DialogTitle>
+//                   <p className="mt-2 text-sm text-muted-foreground">
+//                     You have a previous attempt in progress. Would you like to continue or start a new exam?
+//                   </p>
+//                   <div className="mt-6 flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2 sm:justify-end">
+//                     <Button
+//                       variant="outline"
+//                       onClick={() => {
+//                         setIsModalOpen(false);
+//                         onStartExam(false); // Continue
+//                       }}
+//                       className="w-full text-black dark:text-white sm:w-auto"
+//                     >
+//                       Continue Previous Attempt
+//                     </Button>
+//                     <Button
+//                       onClick={() => {
+//                         setIsModalOpen(false);
+//                         onStartExam(true); // Start New
+//                       }}
+//                       className="w-full sm:w-auto"
+//                     >
+//                       Start New Attempt
+//                     </Button>
+//                   </div>
+//                 </DialogPanel>
+//               </Transition.Child>
+//             </div>
+//           </Dialog>
+//         </Transition>
+
+//         {/* Modal for Login Prompt */}
+//         <Transition appear show={isLoginPromptOpen} as={Fragment}>
+//           <Dialog onClose={() => setIsLoginPromptOpen(false)} className="relative z-50">
+//             <Transition.Child
+//               as={Fragment}
+//               enter="ease-out duration-300"
+//               enterFrom="opacity-0"
+//               enterTo="opacity-100"
+//               leave="ease-in duration-200"
+//               leaveFrom="opacity-100"
+//               leaveTo="opacity-0"
+//             >
+//               <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+//             </Transition.Child>
+
+//             <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+//               <Transition.Child
+//                 as={Fragment}
+//                 enter="ease-out duration-300"
+//                 enterFrom="opacity-0 scale-95"
+//                 enterTo="opacity-100 scale-100"
+//                 leave="ease-in duration-200"
+//                 leaveFrom="opacity-100 scale-100"
+//                 leaveTo="opacity-0 scale-95"
+//               >
+//                 <DialogPanel className="w-full max-w-md rounded-lg bg-background p-6 shadow-xl">
+//                   <DialogTitle className="text-lg font-semibold text-foreground">
+//                     Log In Required
+//                   </DialogTitle>
+//                   <p className="mt-2 text-sm text-muted-foreground">
+//                     Please log in or sign up to start the exam.
+//                   </p>
+//                   <div className="mt-6 flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2 sm:justify-end">
+//                     <Button
+//                       variant="outline"
+//                       onClick={handleLoginRedirect}
+//                       className="w-full text-black dark:text-white sm:w-auto"
+//                     >
+//                       Log In
+//                     </Button>
+//                     <Button
+//                       onClick={handleSignupRedirect}
+//                       className="w-full sm:w-auto"
+//                     >
+//                       Sign Up
+//                     </Button>
+//                     <Button
+//                       variant="ghost"
+//                       onClick={() => setIsLoginPromptOpen(false)}
+//                       className="w-full sm:w-auto text-muted-foreground"
+//                     >
+//                       Cancel
+//                     </Button>
+//                   </div>
+//                 </DialogPanel>
+//               </Transition.Child>
+//             </div>
+//           </Dialog>
+//         </Transition>
+//       </div>
+//     </section>
+//   );
+// };
+
+// export default StartScreen;
+
+
 import { useState, Fragment } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogPanel, DialogTitle, Transition } from "@headlessui/react";
+import { useRouter } from "next/router";
 
-const StartScreen = ({ paperData, hasPreviousAttempt, onStartExam }) => {
+const StartScreen = ({ paperData, hasPreviousAttempt, onStartExam, isLoggedIn }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false);
+  const router = useRouter();
+  const { exam, subject, paper, mode } = router.query;
 
   const handleStartClick = () => {
-    if (hasPreviousAttempt) {
+    if (!isLoggedIn) {
+      setIsLoginPromptOpen(true);
+    } else if (hasPreviousAttempt) {
       setIsModalOpen(true);
     } else {
-      onStartExam(true); // Start new directly if no previous attempt
+      onStartExam(true);
     }
+  };
+
+  const handleLoginRedirect = () => {
+    const redirectUrl = `/${exam}/${subject}/${paper}?mode=${mode}`;
+    router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
+  };
+
+  const handleSignupRedirect = () => {
+    const redirectUrl = `/${exam}/${subject}/${paper}?mode=${mode}`;
+    router.push(`/signup?redirect=${encodeURIComponent(redirectUrl)}`);
   };
 
   return (
@@ -141,7 +435,6 @@ const StartScreen = ({ paperData, hasPreviousAttempt, onStartExam }) => {
         {/* Modal for Previous Attempt Prompt */}
         <Transition appear show={isModalOpen} as={Fragment}>
           <Dialog onClose={() => setIsModalOpen(false)} className="relative z-50">
-            {/* Backdrop */}
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -154,7 +447,6 @@ const StartScreen = ({ paperData, hasPreviousAttempt, onStartExam }) => {
               <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
             </Transition.Child>
 
-            {/* Centering Container */}
             <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
               <Transition.Child
                 as={Fragment}
@@ -165,17 +457,13 @@ const StartScreen = ({ paperData, hasPreviousAttempt, onStartExam }) => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                {/* Dialog Panel - Fixed width to prevent overflow */}
                 <DialogPanel className="w-full max-w-md rounded-lg bg-background p-6 shadow-xl">
                   <DialogTitle className="text-lg font-semibold text-foreground">
                     Previous Attempt Detected
                   </DialogTitle>
-
                   <p className="mt-2 text-sm text-muted-foreground">
                     You have a previous attempt in progress. Would you like to continue or start a new exam?
                   </p>
-
-                  {/* Button container with proper spacing */}
                   <div className="mt-6 flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2 sm:justify-end">
                     <Button
                       variant="outline"
@@ -195,6 +483,66 @@ const StartScreen = ({ paperData, hasPreviousAttempt, onStartExam }) => {
                       className="w-full sm:w-auto"
                     >
                       Start New Attempt
+                    </Button>
+                  </div>
+                </DialogPanel>
+              </Transition.Child>
+            </div>
+          </Dialog>
+        </Transition>
+
+        {/* Modal for Login Prompt */}
+        <Transition appear show={isLoginPromptOpen} as={Fragment}>
+          <Dialog onClose={() => setIsLoginPromptOpen(false)} className="relative z-50">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+            </Transition.Child>
+
+            <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <DialogPanel className="w-full max-w-md rounded-lg bg-background p-6 shadow-xl">
+                  <DialogTitle className="text-lg font-semibold text-foreground">
+                    Log In Required
+                  </DialogTitle>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Please log in or sign up to start the exam.
+                  </p>
+                  <div className="mt-6 flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2 sm:justify-end">
+                    <Button
+                      variant="outline"
+                      onClick={handleLoginRedirect}
+                      className="w-full text-black dark:text-white sm:w-auto"
+                    >
+                      Log In
+                    </Button>
+                    <Button
+                      onClick={handleSignupRedirect}
+                      className="w-full sm:w-auto"
+                    >
+                      Sign Up
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={() => setIsLoginPromptOpen(false)}
+                      className="w-full sm:w-auto text-muted-foreground"
+                    >
+                      Cancel
                     </Button>
                   </div>
                 </DialogPanel>
