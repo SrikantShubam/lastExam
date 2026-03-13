@@ -8,7 +8,7 @@ const QuestionDisplay = ({ question, userAnswer, onAnswerChange }) => {
     <>
       {/* Question */}
       {question.question ? (
-        <div className="mb-3">
+        <div className="mb-10">
           <p className="font-semibold text-lg">
             Q{question.question_no}. {question.question}
           </p>
@@ -40,7 +40,7 @@ const QuestionDisplay = ({ question, userAnswer, onAnswerChange }) => {
           <RadioGroup
             value={userAnswer || ""}
             onValueChange={onAnswerChange}
-            className="space-y-2" // Increased spacing between options
+            className="space-y-6" // Increased spacing between options
           >
             {["a", "b", "c", "d"].map((key) => {
               const value = question.options[key];

@@ -2,11 +2,26 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import YouTube from "react-youtube";
 
-const AdPrompt = ({ paperName, onProceed, adType = "video", videoUrl = "https://www.youtube.com/watch?v=NuI2u_9it4o" }) => {
+// Define the props interface
+interface AdPromptProps {
+  paperName: string;
+  onProceed: () => void;
+  adType?: string; // Optional with default value
+  videoUrl?: string; // Optional with default value
+}
+
+const AdPrompt: React.FC<AdPromptProps> = ({
+  paperName,
+  onProceed,
+  adType = "video",
+  videoUrl = "https://www.youtube.com/watch?v=NuI2u_9it4o",
+}) => {
   const [isVideoEnded, setIsVideoEnded] = useState(false);
 
   // Extract video ID from URL
-  const videoId = videoUrl.includes("v=") ? videoUrl.split("v=")[1].split("&")[0] : videoUrl.split("/").pop();
+  const videoId = videoUrl.includes("v=")
+    ? videoUrl.split("v=")[1].split("&")[0]
+    : videoUrl.split("/").pop();
 
   const handleVideoEnd = () => {
     setIsVideoEnded(true);
