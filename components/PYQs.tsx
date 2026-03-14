@@ -73,8 +73,8 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import Image from "next/image";
 import { FiArrowRight } from "react-icons/fi";
+import { Calculator, Atom, CircuitBoard, FlaskConical, Leaf } from "lucide-react";
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
 import { useCallback } from "react";
@@ -85,24 +85,24 @@ const particlesInit = async (engine) => {
 };
 
 export default function PYQSection() {
-  // Define subjects with image paths
+  // Define subjects with icons
   const subjects = [
     {
       title: "Mathematics",
       description: "Master calculus, algebra, and more with comprehensive question papers.",
-      image: "/images/math.svg", // Replace with actual image path
+      icon: Calculator,
       count: "250+ Questions",
     },
     {
       title: "Physics",
       description: "Practice mechanics, thermodynamics, and electricity with past papers.",
-      image: "/images/physics.svg",
+      icon: Atom,
       count: "180+ Questions",
     },
     {
       title: "Computer Science",
       description: "Test your knowledge of algorithms, data structures, and programming.",
-      image: "/images/computer-science.svg",
+      icon: CircuitBoard,
       count: "210+ Questions",
     },
   ];
@@ -209,14 +209,9 @@ export default function PYQSection() {
             >
               <Card className="h-full border border-border rounded-xl bg-card hover:shadow-xl transition-all duration-300 group overflow-hidden">
                 <CardContent className="p-6 flex flex-col items-start space-y-4">
-                  {/* Image */}
-                  <div className="relative w-12 h-12 mb-4">
-                    <Image
-                      src={subject.image}
-                      alt={`${subject.title} illustration`}
-                      fill
-                      className="object-contain text-primary"
-                    />
+                  {/* Icon */}
+                  <div className="w-12 h-12 mb-4 flex items-center justify-center bg-primary/10 rounded-lg">
+                    <subject.icon className="w-6 h-6 text-primary" />
                   </div>
                   <h3 className="text-2xl font-bold text-foreground">{subject.title}</h3>
                   <p className="text-muted-foreground text-sm">{subject.description}</p>
