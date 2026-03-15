@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardCardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import VoiceReader from "@/components/VoiceReader";
 import { Badge } from "@/components/ui/badge";
 
 interface Question {
@@ -380,7 +381,14 @@ export default function QuizPage() {
           {/* Question Card */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">{currentQuestion.question}</CardTitle>
+              <div className="flex items-start justify-between gap-4">
+  <CardTitle className="text-2xl flex-1">{currentQuestion.question}</CardTitle>
+  <VoiceReader 
+    text={currentQuestion.question} 
+    options={currentQuestion.options} 
+    questionId={currentQuestion.id}
+  />
+</div>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">

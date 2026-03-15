@@ -556,6 +556,7 @@ import { Menu, X, Moon, Sun, LogOut } from "lucide-react";
 import { Menu as HeadlessMenu, Transition } from "@headlessui/react";
 import { signOut, onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "../lib/firebase";
+import { useTheme } from "next-themes";
 
 // Explicitly type auth (assumes lib/firebase.ts exports typed auth)
 import type { Auth } from "firebase/auth";
@@ -565,7 +566,7 @@ interface NavbarProps {}
 
 // Define Navbar as a typed functional component
 const Navbar: FC<NavbarProps> = memo(() => {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const { theme, setTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
@@ -584,31 +585,9 @@ const Navbar: FC<NavbarProps> = memo(() => {
     };
   }, []);
 
-  // Load theme from localStorage on mount
-  useEffect(() => {
-    // console.log("Theme loader mounted");
-    const storedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
-    if (storedTheme) {
-      setTheme(storedTheme);
-      document.documentElement.classList.add(storedTheme);
-    } else {
-      document.documentElement.classList.add("light");
-    }
-  }, []);
-
   const toggleTheme = () => {
     // console.log("Toggling theme");
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-
-    if (newTheme === "dark") {
-      document.documentElement.classList.add("dark");
-      document.documentElement.classList.remove("light");
-    } else {
-      document.documentElement.classList.add("light");
-      document.documentElement.classList.remove("dark");
-    }
+    setTheme(theme === "light" ? "dark" : "light");
   };
 
   const handleLogout = async () => {
